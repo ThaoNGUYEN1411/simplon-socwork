@@ -18,10 +18,15 @@ export default {
         },
         body: JSON.stringify(this.inputs),
       };
-      const response = await fetch("http://localhost:8080/accounts", options);
+      const response = await fetch(
+        "http://localhost:8080/accounts/authentificate",
+        options
+      );
       if (response.ok) {
-        alert("Compte créé avec succès");
+        const data = await response.text();
+        alert(data);
       } else {
+        alert("account not found");
         console.error("Dev is a failure!");
       }
     },
@@ -30,7 +35,7 @@ export default {
 </script>
 
 <template>
-  <h1>Créer un compte</h1>
+  <h1>Connectez votre compte</h1>
   <form @submit.prevent="submit" novalidate>
     <div>
       <label for="username">Nom d'utilisateur</label>
@@ -51,7 +56,7 @@ export default {
       />
     </div>
     <div class="btn">
-      <button type="submit">Créer un compte</button>
+      <button type="submit">Se Connecter</button>
     </div>
   </form>
 </template>

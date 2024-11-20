@@ -16,8 +16,8 @@ abstract class AbstractEntity {
 	return id;
     }
 
-    public AbstractEntity() {
-	// TODO Auto-generated constructor stub
+    protected AbstractEntity() {
+	//
     }
 
     @SuppressWarnings("unused")

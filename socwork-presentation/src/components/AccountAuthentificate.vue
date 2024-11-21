@@ -25,9 +25,11 @@ export default {
       if (response.ok) {
         const data = await response.text();
         alert(data);
-      } else {
-        alert("account not found");
-        console.error("Dev is a failure!");
+      } else if (response.status == 401) {
+        alert("Bad Credentials");
+        const data = await response.text();
+
+        console.error(data);
       }
     },
   },

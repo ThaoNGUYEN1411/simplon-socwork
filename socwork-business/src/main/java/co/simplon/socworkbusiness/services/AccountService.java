@@ -25,7 +25,7 @@ public class AccountService {
     @Transactional
     public void create(AccountCreate inputs) {
 	Account entity = new Account();
-	entity.setUsername(inputs.username().toLowerCase());
+	entity.setUsername(inputs.username());
 	entity.setPassword(passwordEncoder.encode(inputs.password()));
 	repos.save(entity);
     }
@@ -36,9 +36,11 @@ public class AccountService {
 	Account account = repos.findAllByUsernameIgnoreCase(username)
 		.orElseThrow(() -> new BadCredentialsException(username));
 
-	if (account != null) {
-	    return "account found " + username;
+	String password = inputs.password();
+	Boolean isMatchesPassword = passwordEncoder.matches(password, account.getPassword());
+	if (isMatchesPassword == false) {
+	    throw new BadCredentialsException(username);
 	}
-	return "account not found " + username;
+	return "authetification token";
     }
 }

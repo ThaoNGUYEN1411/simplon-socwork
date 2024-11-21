@@ -24,7 +24,8 @@ export default {
       );
       if (response.ok) {
         const data = await response.text();
-        alert(data);
+        alert("authentification succes");
+        console.log(data);
       } else if (response.status == 401) {
         alert("Bad Credentials");
         const data = await response.text();

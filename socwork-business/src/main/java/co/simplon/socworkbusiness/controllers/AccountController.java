@@ -29,7 +29,7 @@ public class AccountController {
 
     @PostMapping("/authentificate")
     @ResponseStatus(HttpStatus.CREATED)
-    Object login(@RequestBody AccountAuthentificate inputs) {
+    Object authentificate(@RequestBody AccountAuthentificate inputs) {
 	return service.authentificate(inputs);
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import co.simplon.socworkbusiness.config.JwtProvider;
 import co.simplon.socworkbusiness.dtos.AccountAuthentificate;
 import co.simplon.socworkbusiness.dtos.AccountCreate;
 import co.simplon.socworkbusiness.entities.Account;
@@ -16,10 +17,12 @@ public class AccountService {
 
     private final AccountRepository repos;
     private final PasswordEncoder passwordEncoder;
+    private JwtProvider jwtProvider;
 
-    public AccountService(AccountRepository repos, PasswordEncoder passwordEncoder) {
+    public AccountService(AccountRepository repos, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
 	this.repos = repos;
 	this.passwordEncoder = passwordEncoder;
+	this.jwtProvider = jwtProvider;
     }
 
     @Transactional
@@ -41,6 +44,10 @@ public class AccountService {
 	if (isMatchesPassword == false) {
 	    throw new BadCredentialsException(username);
 	}
-	return "authetification token";
+
+	String jwtToken = jwtProvider.create(username);
+	System.out.println(jwtToken);
+
+	return jwtToken;
     }
 }

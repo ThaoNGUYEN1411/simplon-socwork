@@ -17,7 +17,7 @@ public class AccountService {
 
     private final AccountRepository repos;
     private final PasswordEncoder passwordEncoder;
-    private JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
     public AccountService(AccountRepository repos, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
 	this.repos = repos;
@@ -49,5 +49,9 @@ public class AccountService {
 	System.out.println(jwtToken);
 
 	return jwtToken;
+    }
+
+    public String getAccount() {
+	return "Thao";
     }
 }

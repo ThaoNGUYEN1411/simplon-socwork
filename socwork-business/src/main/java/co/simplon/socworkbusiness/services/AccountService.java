@@ -39,16 +39,13 @@ public class AccountService {
 	Account account = repos.findAllByUsernameIgnoreCase(username)
 		.orElseThrow(() -> new BadCredentialsException(username));
 
-	String password = inputs.password();
-	Boolean isMatchesPassword = passwordEncoder.matches(password, account.getPassword());
-	if (isMatchesPassword == false) {
+	String row = inputs.password();
+	String encoded = account.getPassword();
+	if (!passwordEncoder.matches(row, encoded)) {
 	    throw new BadCredentialsException(username);
 	}
 
-	String jwtToken = jwtProvider.create(username);
-	System.out.println(jwtToken);
-
-	return jwtToken;
+	return jwtProvider.create(username);
     }
 
     public String getAccount() {

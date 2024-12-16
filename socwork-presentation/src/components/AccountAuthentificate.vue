@@ -19,7 +19,7 @@ export default {
         body: JSON.stringify(this.inputs),
       };
       const response = await fetch(
-        "http://localhost:8080/accounts/authentificate",
+        "http://localhost:8080/accounts/authenticate",
         options
       );
       if (response.ok) {

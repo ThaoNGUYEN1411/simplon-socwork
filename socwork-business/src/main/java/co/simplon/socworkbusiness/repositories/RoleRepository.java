@@ -10,12 +10,8 @@ import co.simplon.socworkbusiness.entities.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Role findByRole(String role);
+    Role findByRoleName(String role);
 
-    Set<Role> findByIsDefaultTrue();
-
-    // Set<Role> findByRoleIsDefault(
-
-    // );
+    Set<Role> findByRoleDefaultTrue();
 
 }

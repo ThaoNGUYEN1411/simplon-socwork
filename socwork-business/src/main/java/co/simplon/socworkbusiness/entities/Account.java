@@ -1,5 +1,7 @@
 package co.simplon.socworkbusiness.entities;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -20,10 +22,21 @@ public class Account extends AbstractEntity {
     private String password;
 
     @ManyToMany
-    @JoinTable(name = "t_access", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "t_account_roles", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public Account() {
+	// ORM
+    }
+
+//    public Account(String username, String password) {
+//	this(username, password, new HashSet<Role>());
+//    }
+
+    public Account(String username, String password, Set<Role> roles) {
+	this.username = username;
+	this.password = password;
+	this.roles = new HashSet<Role>(roles);
     }
 
     public String getUsername() {
@@ -43,16 +56,11 @@ public class Account extends AbstractEntity {
     }
 
     public Set<Role> getRoles() {
-	return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-	this.roles = roles;
+	return Collections.unmodifiableSet(roles);
     }
 
     @Override
     public String toString() {
-	return "{username=" + username + ", password= [PROTECTED]";
+	return "{username=" + username + ", password=[PROTECTED]" + ", roles=" + roles + "}";
     }
-
 }

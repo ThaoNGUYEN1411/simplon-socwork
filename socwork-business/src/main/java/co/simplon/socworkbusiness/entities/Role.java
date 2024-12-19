@@ -8,30 +8,35 @@ import jakarta.persistence.Table;
 @Table(name = "t_roles")
 public class Role extends AbstractEntity {
 
-    @Column(name = "role")
-    private String role;
+    @Column(name = "role_name")
+    private String roleName;
 
-    @Column(name = "is_default")
-    private Boolean isDefault;
+    @Column(name = "role_default")
+    private Boolean roleDefault;
 
     public Role() {
 	// ORM
     }
 
-    public String getRole() {
-	return role;
+    public Role(String roleName, Boolean roleDefault) {
+	this.roleName = roleName;
+	this.roleDefault = roleDefault;
     }
 
-    public void setRole(String role) {
-	this.role = role;
+    public String getRoleName() {
+	return roleName;
     }
 
-    public Boolean getIsDefault() {
-	return isDefault;
+    public void setRoleName(String roleName) {
+	this.roleName = roleName;
     }
 
-    public void setIsDefault(Boolean isDefault) {
-	this.isDefault = isDefault;
+    public Boolean getRoleDefault() {
+	return roleDefault;
+    }
+
+    public void setIsDefault(Boolean roleDefault) {
+	this.roleDefault = roleDefault;
     }
 
 }

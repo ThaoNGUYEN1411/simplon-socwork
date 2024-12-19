@@ -26,7 +26,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 
 @Configuration
 @EnableWebSecurity
-public class Config {
+public class SecurityConfig {
     @Value("${co.simplon.socwork.cors}")
     private String origins;
 
@@ -36,14 +36,15 @@ public class Config {
     @Value("${co.simplon.socwork.secret}")
     private String secret;
 
-    @Value("${co.simplon.socwork.jwt.timeExp}")
-    private Long time;
+    @Value("${co.simplon.socwork.jwt.expriration}")
+    private Long expriration;
 
     @Value("${co.simplon.socwork.jwt.issuer}")
     private String issuer;
 
+    // @Bean injection dependences
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    WebMvcConfigurer corsConfigurer() {
 	return new WebMvcConfigurer() {
 
 	    @Override
@@ -53,16 +54,15 @@ public class Config {
 	};
     }
 
-    // injection dependences
     @Bean
-    public PasswordEncoder encoder() {
+    PasswordEncoder encoder() {
 	return new BCryptPasswordEncoder(cost);
     }
 
     @Bean
     JwtProvider jwtProvider() {
 	Algorithm algorithm = Algorithm.HMAC256(secret);
-	return new JwtProvider(algorithm, time, issuer);
+	return new JwtProvider(algorithm, expriration, issuer);
     }
 
     @Bean
@@ -71,7 +71,6 @@ public class Config {
 	NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(secretKey).macAlgorithm(MacAlgorithm.HS256).build();
 
 	OAuth2TokenValidator<Jwt> validator = JwtValidators.createDefaultWithIssuer(issuer);
-	// here
 	decoder.setJwtValidator(validator);
 	return decoder;
     }
@@ -82,19 +81,22 @@ public class Config {
 	// Relies on JWT
 	// authorize some requests or not
 	// ???
-// V1: my version
+// V1
 //	return http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 //		.authorizeHttpRequests(authorize -> authorize.requestMatchers("/accounts", "/accounts/authenticate")
 //			.permitAll().anyRequest().authenticated())
 //		.oauth2ResourceServer((srv) -> srv.jwt(Customizer.withDefaults())).build();
 
-//	V2 : Correction by Frank
 	return http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 		// Multiple matchers to map verbs + paths + authorizations
 		// "authorizations": anonymous, permit, deny and more...
 		// By configuration (filterChain), also by annotations...
 		.authorizeHttpRequests((req) -> req
 			.requestMatchers(HttpMethod.POST, "/accounts", "/accounts/authenticate").anonymous())
+
+		.authorizeHttpRequests(
+			(req) -> req.requestMatchers(HttpMethod.GET, "/accounts/with-role-admin").hasRole("ADMIN"))
+
 		// Always last rule:
 		.authorizeHttpRequests((reqs) -> reqs.anyRequest().authenticated())
 		.oauth2ResourceServer((srv) -> srv.jwt(Customizer.withDefaults()))
@@ -102,5 +104,4 @@ public class Config {
 		// with all the specified configuration
 		.build();
     }
-
 }

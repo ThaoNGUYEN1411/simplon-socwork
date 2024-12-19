@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.simplon.socworkbusiness.config.JwtProvider;
-import co.simplon.socworkbusiness.dtos.AccountAuthentificate;
+import co.simplon.socworkbusiness.dtos.AccountAuthenticate;
 import co.simplon.socworkbusiness.dtos.AccountCreate;
+import co.simplon.socworkbusiness.dtos.AuthInfo;
 import co.simplon.socworkbusiness.entities.Account;
 import co.simplon.socworkbusiness.entities.Role;
 import co.simplon.socworkbusiness.repositories.AccountRepository;
@@ -35,29 +36,23 @@ public class AccountService {
 
     @Transactional
     public void create(AccountCreate inputs) {
-	Account entity = new Account();
-	entity.setUsername(inputs.username());
-	entity.setPassword(passwordEncoder.encode(inputs.password()));
+	String username = inputs.username();
+	String password = passwordEncoder.encode(inputs.password());
+	Set<Role> roleDefaultValue = roleRepos.findByRoleDefaultTrue();
 
-	// save roles
-//Optional Map Optional<Role> to Role
-	// Set<Role> roles = inputs.roles().stream().map(roleRepos::findByRole)
-//		.collect(Collectors.toSet());
-	// findByActiveTrue()
-	Set<Role> roles = roleRepos.findByIsDefaultTrue();
-	entity.setRoles(roles);
-
+	Account entity = new Account(username, password, roleDefaultValue);
 	repos.save(entity);
+	// save roles with setRoles
+	// Set<Role> roles = inputs.roles().stream().map(roleRepos::findByRole)
+//	.collect(Collectors.toSet());
     }
 
-    @Transactional
-    public Object authentificate(AccountAuthentificate inputs) {
+    public AuthInfo authenticate(AccountAuthenticate inputs) {
 	String username = inputs.username();
-	// List<String> roles = inputs.roles().stream().map(r -> r.getRole()).toList();
 	Account account = repos.findAllByUsernameIgnoreCase(username)
 		.orElseThrow(() -> new BadCredentialsException(username));
 
-	List<String> roles = account.getRoles().stream().map(r -> r.getRole()).toList();
+	List<String> roles = account.getRoles().stream().map(r -> r.getRoleName()).toList();
 
 	String row = inputs.password();
 	String encoded = account.getPassword();
@@ -65,10 +60,15 @@ public class AccountService {
 	    throw new BadCredentialsException(username);
 	}
 
-	return jwtProvider.create(username, roles);
+	String token = jwtProvider.create(username, roles);
+	return new AuthInfo(token, roles);
     }
 
     public String getAccount() {
-	return "Thao";
+	return "ok";
+    }
+
+    public Account findById(Long id) {
+	return repos.findById(id).get();
     }
 }

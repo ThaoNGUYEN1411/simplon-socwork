@@ -11,7 +11,6 @@ public class JwtProvider {
     private final Algorithm algorithm;
     private final long exp;
     private final String issuer;
-    // private final expiration;
 
     JwtProvider(Algorithm algorithm, long exp, String issuer) {
 	this.algorithm = algorithm;

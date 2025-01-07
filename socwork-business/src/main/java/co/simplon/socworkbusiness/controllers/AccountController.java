@@ -43,7 +43,7 @@ public class AccountController {
 	return service.getAccount();
     }
 
-    @GetMapping("with-role-admin")
+    @GetMapping("with-role")
     @ResponseStatus(HttpStatus.OK)
     Object withRole() {
 	return "with role admin";

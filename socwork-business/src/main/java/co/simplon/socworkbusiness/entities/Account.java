@@ -21,6 +21,9 @@ public class Account extends AbstractEntity {
     @Column(name = "password")
     private String password;
 
+    // ManyToMany have optional: fetch = FetchType.EAGER : desactive lazyload par
+    // default
+    // fetch = FetchType.LAZY: default
     @ManyToMany
     @JoinTable(name = "t_account_roles", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
@@ -28,10 +31,6 @@ public class Account extends AbstractEntity {
     public Account() {
 	// ORM
     }
-
-//    public Account(String username, String password) {
-//	this(username, password, new HashSet<Role>());
-//    }
 
     public Account(String username, String password, Set<Role> roles) {
 	this.username = username;
@@ -59,8 +58,13 @@ public class Account extends AbstractEntity {
 	return Collections.unmodifiableSet(roles);
     }
 
+    // roles.size
     @Override
     public String toString() {
-	return "{username=" + username + ", password=[PROTECTED]" + ", roles=" + roles + "}";
+	return "{username=" + username + ", password=[PROTECTED]" + ", roles=LAZY_LOADING}";
     }
 }
+
+//public Account(String username, String password) {
+//	this(username, password, new HashSet<Role>());
+//}

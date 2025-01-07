@@ -38,7 +38,8 @@ public class AccountService {
     public void create(AccountCreate inputs) {
 	String username = inputs.username();
 	String password = passwordEncoder.encode(inputs.password());
-	Set<Role> roleDefaultValue = roleRepos.findByRoleDefaultTrue();
+	Set<Role> roleDefaultValue = roleRepos.findByRoleDefaultTrue()
+		.orElseThrow(() -> new BadCredentialsException(username));
 
 	Account entity = new Account(username, password, roleDefaultValue);
 	repos.save(entity);
@@ -52,6 +53,8 @@ public class AccountService {
 	Account account = repos.findAllByUsernameIgnoreCase(username)
 		.orElseThrow(() -> new BadCredentialsException(username));
 
+	// System.out.println(account); => recuperer account, pas contient le roles
+	// applique Lazy loading
 	List<String> roles = account.getRoles().stream().map(r -> r.getRoleName()).toList();
 
 	String row = inputs.password();

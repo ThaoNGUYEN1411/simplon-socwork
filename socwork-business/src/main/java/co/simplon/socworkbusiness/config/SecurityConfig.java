@@ -36,8 +36,8 @@ public class SecurityConfig {
     @Value("${co.simplon.socwork.secret}")
     private String secret;
 
-    @Value("${co.simplon.socwork.jwt.expriration}")
-    private Long expriration;
+    @Value("${co.simplon.socwork.jwt.expiration}")
+    private long expiration;
 
     @Value("${co.simplon.socwork.jwt.issuer}")
     private String issuer;
@@ -62,7 +62,7 @@ public class SecurityConfig {
     @Bean
     JwtProvider jwtProvider() {
 	Algorithm algorithm = Algorithm.HMAC256(secret);
-	return new JwtProvider(algorithm, expriration, issuer);
+	return new JwtProvider(algorithm, expiration, issuer);
     }
 
     @Bean
@@ -75,12 +75,9 @@ public class SecurityConfig {
 	return decoder;
     }
 
-    @Bean // Change default behaviour
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	// Default Spring behaviour: PoLP (no authorization at all)
-	// Relies on JWT
-	// authorize some requests or not
-	// ???
 // V1
 //	return http.cors(Customizer.withDefaults()).csrf(csrf -> csrf.disable())
 //		.authorizeHttpRequests(authorize -> authorize.requestMatchers("/accounts", "/accounts/authenticate")
@@ -95,7 +92,7 @@ public class SecurityConfig {
 			.requestMatchers(HttpMethod.POST, "/accounts", "/accounts/authenticate").anonymous())
 
 		.authorizeHttpRequests(
-			(req) -> req.requestMatchers(HttpMethod.GET, "/accounts/with-role-admin").hasRole("ADMIN"))
+			(req) -> req.requestMatchers(HttpMethod.GET, "/accounts/with-role").hasRole("MANAGER"))
 
 		// Always last rule:
 		.authorizeHttpRequests((reqs) -> reqs.anyRequest().authenticated())
